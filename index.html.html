@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>직무·기술 학습 일지</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f2f1ee;min-height:100vh;padding:2rem 1rem}
+.wrap{max-width:700px;margin:0 auto}
+.journal{background:#fff;border-radius:16px;padding:2rem;box-shadow:0 1px 8px rgba(0,0,0,.07);margin-bottom:1.5rem}
+
+/* Header */
+.hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:1px solid #eee;gap:12px;flex-wrap:wrap}
+.hdr-left h1{font-size:19px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:8px}
+.hdr-left p{font-size:13px;color:#999;margin-top:3px}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.datein{font-size:13px;color:#555;border:1px solid #ddd;border-radius:8px;padding:6px 10px;background:#fafaf8}
+.badge-week{font-size:11px;font-weight:600;background:#E1F5EE;color:#0F6E56;border-radius:20px;padding:3px 10px}
+
+/* Section */
+.sec{margin-bottom:1.25rem}
+.lbl{font-size:11px;font-weight:700;color:#888;letter-spacing:.07em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dp{background:#7F77DD}.dt{background:#1D9E75}.da{background:#BA7517}.dc{background:#D85A30}.db{background:#378ADD}.dg{background:#888780}
+.divider{border:none;border-top:1px solid #f0f0f0;margin:1.25rem 0}
+
+/* Inputs */
+textarea{width:100%;border:1px solid #e0e0e0;border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;color:#222;background:#fff;resize:vertical;min-height:70px;line-height:1.65;transition:border-color .15s}
+textarea:focus{outline:none;border-color:#7F77DD}
+textarea::placeholder{color:#c0c0c0;font-size:13px}
+input[type=text]{width:100%;border:1px solid #e0e0e0;border-radius:8px;padding:9px 12px;font-size:14px;font-family:inherit;color:#222;background:#fff;transition:border-color .15s}
+input[type=text]:focus{outline:none;border-color:#7F77DD}
+input[type=text]::placeholder{color:#c0c0c0;font-size:13px}
+
+/* 2-col */
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* Skill area chips */
+.chiprow{display:flex;gap:7px;flex-wrap:wrap}
+.chip{border:1px solid #e0e0e0;border-radius:20px;padding:5px 13px;font-size:13px;cursor:pointer;background:#fff;color:#666;transition:all .15s}
+.chip:hover{background:#f5f4fe}
+.chip.act{font-weight:600}
+.chip-purple.act{background:#EEEDFE;border-color:#7F77DD;color:#3C3489}
+.chip-teal.act{background:#E1F5EE;border-color:#1D9E75;color:#085041}
+.chip-amber.act{background:#FAEEDA;border-color:#BA7517;color:#633806}
+.chip-coral.act{background:#FAECE7;border-color:#D85A30;color:#4A1B0C}
+.chip-blue.act{background:#E6F1FB;border-color:#378ADD;color:#042C53}
+
+/* Difficulty */
+.diff-row{display:flex;gap:6px}
+.diff-btn{flex:1;border:1px solid #e0e0e0;border-radius:8px;padding:8px 4px;font-size:13px;cursor:pointer;background:#fff;color:#666;text-align:center;transition:all .15s}
+.diff-btn:hover{background:#fafaf8}
+.diff-btn.act-easy{background:#E1F5EE;border-color:#1D9E75;color:#085041;font-weight:600}
+.diff-btn.act-mid{background:#FAEEDA;border-color:#BA7517;color:#633806;font-weight:600}
+.diff-btn.act-hard{background:#FAECE7;border-color:#D85A30;color:#4A1B0C;font-weight:600}
+
+/* Stars */
+.stars{display:flex;gap:4px}
+.star{font-size:23px;cursor:pointer;color:#ddd;transition:color .1s;user-select:none;line-height:1}
+.star.lit{color:#EF9F27}
+
+/* Time slider */
+.trow{display:flex;align-items:center;gap:10px;margin-top:2px}
+.trow input[type=range]{flex:1;accent-color:#7F77DD}
+.tv{font-size:14px;font-weight:700;color:#333;min-width:56px;text-align:right}
+
+/* Tags */
+.tagwrap{display:flex;flex-wrap:wrap;gap:6px;border:1px solid #e0e0e0;border-radius:8px;padding:8px 10px;background:#fff;min-height:42px;align-items:center;cursor:text;transition:border-color .15s}
+.tagwrap:focus-within{border-color:#7F77DD}
+.tag{background:#EEEDFE;color:#3C3489;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px}
+.tx{cursor:pointer;font-size:14px;line-height:1;color:#534AB7}
+.tinp{border:none;outline:none;font-size:14px;background:transparent;color:#222;min-width:80px;font-family:inherit}
+.tinp::placeholder{color:#c0c0c0;font-size:13px}
+
+/* Checklist */
+.ci{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #eee;border-radius:8px;background:#fff;cursor:pointer;transition:background .1s;margin-bottom:7px}
+.ci:last-child{margin-bottom:0}
+.ci:hover{background:#fafafa}
+.ci input[type=checkbox]{width:15px;height:15px;accent-color:#1D9E75;cursor:pointer;flex-shrink:0}
+.ci span{font-size:14px;color:#333}
+.ci.done span{text-decoration:line-through;color:#bbb}
+.pbw{height:6px;background:#f0f0f0;border-radius:3px;margin-top:8px;overflow:hidden}
+.pb{height:100%;background:#1D9E75;border-radius:3px;transition:width .35s}
+.plbl{font-size:12px;color:#999;margin-top:5px}
+
+/* Apply score */
+.apply-row{display:flex;gap:8px;align-items:center;margin-top:4px}
+.apply-btn{border:1px solid #e0e0e0;border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;background:#fff;color:#666;transition:all .15s;flex:1;text-align:center}
+.apply-btn:hover{background:#fafaf8}
+.apply-btn.act{background:#E6F1FB;border-color:#378ADD;color:#042C53;font-weight:600}
+
+/* Weekly tracker */
+.week-track{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:8px}
+.wday{text-align:center}
+.wday-lbl{font-size:10px;color:#bbb;margin-bottom:4px;font-weight:600}
+.wday-dot{width:28px;height:28px;border-radius:50%;border:1.5px solid #e0e0e0;background:#fff;margin:0 auto;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:11px;color:#ccc;font-weight:700}
+.wday-dot.done{background:#1D9E75;border-color:#1D9E75;color:#fff}
+.wday-dot.today{border-color:#7F77DD;color:#7F77DD}
+.wday-dot.today.done{background:#7F77DD;border-color:#7F77DD;color:#fff}
+.week-stat{font-size:12px;color:#999;margin-top:6px}
+.week-stat span{font-weight:700;color:#1D9E75}
+
+/* Summary */
+.sbtn{width:100%;margin-top:1.5rem;padding:13px;border:1.5px solid #7F77DD;border-radius:12px;background:#fff;color:#534AB7;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s}
+.sbtn:hover{background:#EEEDFE}
+.result-box{margin-top:1.5rem;border:1px solid #e0e0e0;border-radius:12px;background:#fafaf8;overflow:hidden;display:none}
+.result-title{font-size:13px;font-weight:700;color:#555;padding:12px 16px;background:#f5f4f0;border-bottom:1px solid #eee;letter-spacing:.04em;text-transform:uppercase}
+.result-content{padding:14px 16px;font-size:13.5px;line-height:1.8;color:#333;white-space:pre-wrap}
+
+/* Insight card */
+.insight-card{background:#EEEDFE;border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;display:none}
+.insight-card p{font-size:13px;color:#3C3489;line-height:1.7}
+.insight-card strong{font-weight:700}
+
+@media(max-width:480px){.r2{grid-template-columns:1fr}.diff-row{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="journal">
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-left">
+      <h1>💼 직무·기술 학습 일지</h1>
+      <p>주 3~4회 꾸준한 기록이 실력을 만듭니다</p>
+    </div>
+    <div class="hdr-right">
+      <input class="datein" type="date" id="di">
+      <span class="badge-week" id="weekBadge">이번 주 0회 기록</span>
+    </div>
+  </div>
+
+  <!-- 주간 출석 트래커 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dt"></span>이번 주 학습 현황</div>
+    <div class="week-track" id="weekTrack"></div>
+    <div class="week-stat" id="weekStat">이번 주 <span id="weekCount">0</span>회 학습 완료</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 기술 분야 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dp"></span>기술 분야</div>
+    <div class="chiprow" id="skillArea">
+      <button class="chip chip-purple" data-v="개발/프로그래밍">💻 개발/프로그래밍</button>
+      <button class="chip chip-teal" data-v="데이터/AI">📊 데이터/AI</button>
+      <button class="chip chip-amber" data-v="기획/PM">📋 기획/PM</button>
+      <button class="chip chip-coral" data-v="디자인/UX">🎨 디자인/UX</button>
+      <button class="chip chip-blue" data-v="마케팅/운영">📣 마케팅/운영</button>
+    </div>
+  </div>
+
+  <!-- 오늘의 학습 주제 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dp"></span>오늘의 학습 주제</div>
+    <input type="text" id="topic" placeholder="예: React useEffect 훅 심화, SQL 집계함수, 사용자 인터뷰 방법론...">
+  </div>
+
+  <hr class="divider">
+
+  <!-- 시간 + 집중도 -->
+  <div class="r2">
+    <div class="sec">
+      <div class="lbl"><span class="dot dt"></span>학습 시간</div>
+      <div class="trow">
+        <input type="range" id="tr" min="10" max="240" step="10" value="60">
+        <span class="tv" id="tvEl">60분</span>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="lbl"><span class="dot da"></span>집중도</div>
+      <div class="stars" id="stars">
+        <span class="star" data-i="1">★</span>
+        <span class="star" data-i="2">★</span>
+        <span class="star" data-i="3">★</span>
+        <span class="star" data-i="4">★</span>
+        <span class="star" data-i="5">★</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 난이도 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot da"></span>오늘 내용의 난이도</div>
+    <div class="diff-row" id="diffRow">
+      <button class="diff-btn" data-d="쉬움" data-cls="act-easy">😌 쉬움</button>
+      <button class="diff-btn" data-d="적당함" data-cls="act-mid">🤔 적당함</button>
+      <button class="diff-btn" data-d="어려움" data-cls="act-hard">😤 어려움</button>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 핵심 학습 내용 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dt"></span>오늘 배운 핵심 내용</div>
+    <textarea id="learned" placeholder="핵심 개념/기술을 내 말로 요약해보세요. (무엇을, 왜, 어떻게)" style="min-height:90px"></textarea>
+  </div>
+
+  <!-- 실습/적용한 것 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dp"></span>직접 실습하거나 적용한 것</div>
+    <textarea id="practice" placeholder="예: 직접 코드를 짜봤다, 예제 분석, 토이프로젝트 적용, 업무에 활용해봤다..."></textarea>
+  </div>
+
+  <!-- 업무 적용 가능성 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot db"></span>실무/업무에 바로 쓸 수 있나요?</div>
+    <div class="apply-row" id="applyRow">
+      <button class="apply-btn" data-a="바로 적용 가능">✅ 바로 적용</button>
+      <button class="apply-btn" data-a="조금 더 연습 필요">🔧 연습 더 필요</button>
+      <button class="apply-btn" data-a="배경지식 축적 단계">📚 배경지식 단계</button>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 막혔던 부분 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dc"></span>막혔거나 이해 안 된 부분</div>
+    <textarea id="difficult" placeholder="구체적으로 적어두면 다음 학습에 활용됩니다..."></textarea>
+  </div>
+
+  <!-- 참고 자료 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dg"></span>참고한 자료 (링크/책/강의)</div>
+    <input type="text" id="resource" placeholder="예: docs.react.dev, 인프런 강의명, 책 제목 + 챕터...">
+  </div>
+
+  <!-- 다음 학습 계획 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dp"></span>다음 학습 계획</div>
+    <textarea id="next" placeholder="다음에 배울 내용이나 복습할 부분을 미리 정해두세요..."></textarea>
+  </div>
+
+  <!-- 키워드 태그 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dp"></span>키워드 태그</div>
+    <div class="tagwrap" id="tw">
+      <input class="tinp" id="ti" placeholder="기술 키워드 입력 후 Enter (예: React, hooks, 비동기)">
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 체크리스트 -->
+  <div class="sec">
+    <div class="lbl"><span class="dot dt"></span>오늘의 학습 점검</div>
+    <div id="cl">
+      <div class="ci" onclick="tc(this)"><input type="checkbox"><span>학습 목표를 달성했다</span></div>
+      <div class="ci" onclick="tc(this)"><input type="checkbox"><span>배운 내용을 내 말로 설명할 수 있다</span></div>
+      <div class="ci" onclick="tc(this)"><input type="checkbox"><span>직접 코드/실습/예제를 해봤다</span></div>
+      <div class="ci" onclick="tc(this)"><input type="checkbox"><span>모르는 부분을 기록해두었다</span></div>
+      <div class="ci" onclick="tc(this)"><input type="checkbox"><span>다음 학습 주제를 정했다</span></div>
+    </div>
+    <div class="pbw"><div class="pb" id="pb" style="width:0%"></div></div>
+    <div class="plbl" id="pl">0 / 5 완료</div>
+  </div>
+
+  <button class="sbtn" onclick="showSummary()">📋 오늘 학습 요약 보기</button>
+
+  <div class="result-box" id="result">
+    <div class="result-title">📋 오늘의 학습 요약</div>
+    <div class="result-content" id="resultContent"></div>
+  </div>
+
+  <!-- 인사이트 카드 -->
+  <div class="insight-card" id="insight">
+    <p id="insightText"></p>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function(){
+  /* 날짜 */
+  var di=document.getElementById('di');
+  var today=new Date();
+  di.value=today.toISOString().split('T')[0];
+
+  /* 주간 트래커 */
+  var DAYS=['월','화','수','목','금','토','일'];
+  var todayDow=today.getDay(); // 0=sun
+  var adjDow=todayDow===0?6:todayDow-1; // 0=mon
+  var weekTrack=document.getElementById('weekTrack');
+  var weekDots=[];
+  for(var i=0;i<7;i++){
+    var col=document.createElement('div');
+    col.className='wday';
+    col.innerHTML='<div class="wday-lbl">'+DAYS[i]+'</div>';
+    var dot=document.createElement('div');
+    dot.className='wday-dot'+(i===adjDow?' today':'');
+    dot.dataset.day=i;
+    dot.textContent='';
+    dot.onclick=(function(d,dd){return function(){toggleDay(d,dd)};})(i,dot);
+    weekDots.push(dot);
+    col.appendChild(dot);
+    weekTrack.appendChild(col);
+  }
+  var weekDone=[];
+  function toggleDay(i,dot){
+    var idx=weekDone.indexOf(i);
+    if(idx>-1){weekDone.splice(idx,1);dot.classList.remove('done');dot.textContent='';}
+    else{weekDone.push(i);dot.classList.add('done');dot.textContent='✓';}
+    updateWeekStat();
+  }
+  function updateWeekStat(){
+    var n=weekDone.length;
+    document.getElementById('weekCount').textContent=n;
+    document.getElementById('weekBadge').textContent='이번 주 '+n+'회 기록';
+    var goal=4;
+    var msg=n>=goal?'🎉 목표 달성! 이번 주도 훌륭해요':'목표 '+goal+'회 중 '+n+'회 완료';
+    document.getElementById('weekStat').innerHTML='이번 주 <span id="weekCount">'+n+'</span>회 학습 완료 · '+msg;
+  }
+
+  /* 시간 슬라이더 */
+  var tr=document.getElementById('tr'),tvEl=document.getElementById('tvEl');
+  tr.oninput=function(){
+    var v=+tr.value;
+    tvEl.textContent=v>=60?Math.floor(v/60)+'시간'+(v%60?' '+v%60+'분':''):v+'분';
+  };
+
+  /* 별점 */
+  var sv=0;
+  document.querySelectorAll('.star').forEach(function(s){
+    s.onmouseover=function(){hs(+s.dataset.i)};
+    s.onmouseout=function(){hs(sv)};
+    s.onclick=function(){sv=+s.dataset.i;hs(sv)};
+  });
+  function hs(n){document.querySelectorAll('.star').forEach(function(s){s.classList.toggle('lit',+s.dataset.i<=n)});}
+
+  /* 기술 분야 칩 */
+  document.querySelectorAll('#skillArea .chip').forEach(function(b){
+    b.onclick=function(){
+      document.querySelectorAll('#skillArea .chip').forEach(function(x){x.classList.remove('act')});
+      b.classList.add('act');
+    };
+  });
+
+  /* 난이도 */
+  document.querySelectorAll('#diffRow .diff-btn').forEach(function(b){
+    b.onclick=function(){
+      document.querySelectorAll('#diffRow .diff-btn').forEach(function(x){x.className='diff-btn';});
+      b.classList.add(b.dataset.cls);
+    };
+  });
+
+  /* 업무 적용 */
+  document.querySelectorAll('#applyRow .apply-btn').forEach(function(b){
+    b.onclick=function(){
+      document.querySelectorAll('#applyRow .apply-btn').forEach(function(x){x.classList.remove('act')});
+      b.classList.add('act');
+    };
+  });
+
+  /* 태그 */
+  var tags=[],ti=document.getElementById('ti'),tw=document.getElementById('tw');
+  ti.onkeydown=function(e){
+    if(e.key==='Enter'&&ti.value.trim()){
+      e.preventDefault();
+      var t=ti.value.trim();
+      if(!tags.includes(t)){tags.push(t);rt();}
+      ti.value='';
+    }
+  };
+  tw.onclick=function(){ti.focus()};
+  function rt(){
+    tw.querySelectorAll('.tag').forEach(function(t){t.remove()});
+    tags.forEach(function(t){
+      var el=document.createElement('span');
+      el.className='tag';
+      el.innerHTML=t+'<span class="tx">×</span>';
+      el.querySelector('.tx').onclick=function(e){e.stopPropagation();tags=tags.filter(function(x){return x!==t});rt();};
+      tw.insertBefore(el,ti);
+    });
+  }
+
+  /* 체크리스트 */
+  window.tc=function(el){
+    var cb=el.querySelector('input');
+    cb.checked=!cb.checked;
+    el.classList.toggle('done',cb.checked);
+    var all=document.querySelectorAll('.ci'),done=document.querySelectorAll('.ci.done').length;
+    document.getElementById('pb').style.width=Math.round(done/all.length*100)+'%';
+    document.getElementById('pl').textContent=done+' / '+all.length+' 완료';
+  };
+
+  /* 요약 */
+  window.showSummary=function(){
+    var area=(document.querySelector('#skillArea .chip.act')||{dataset:{v:'미선택'}}).dataset.v;
+    var topic=document.getElementById('topic').value||'미입력';
+    var learned=document.getElementById('learned').value||'미입력';
+    var practice=document.getElementById('practice').value||'미입력';
+    var difficult=document.getElementById('difficult').value||'미입력';
+    var resource=document.getElementById('resource').value||'없음';
+    var next=document.getElementById('next').value||'미입력';
+    var date=di.value;
+    var time=tvEl.textContent;
+    var focus=sv?'★'.repeat(sv)+'☆'.repeat(5-sv):'미입력';
+    var diff=(document.querySelector('#diffRow .diff-btn[class*="act-"]')||{dataset:{d:'미선택'}}).dataset.d;
+    var apply=(document.querySelector('#applyRow .apply-btn.act')||{dataset:{a:'미선택'}}).dataset.a;
+    var tagStr=tags.length?tags.join(', '):'없음';
+    var done=document.querySelectorAll('.ci.done').length;
+    var total=document.querySelectorAll('.ci').length;
+    var weeks=weekDone.length;
+
+    var txt=[
+      '📅 날짜: '+date+'  |  🏢 분야: '+area,
+      '📚 주제: '+topic,
+      '⏱ 학습 시간: '+time+'  |  🎯 집중도: '+focus+'  |  난이도: '+diff,
+      '💼 업무 적용: '+apply,
+      '🏷 태그: '+tagStr,
+      '',
+      '✅ 핵심 내용:',
+      learned,
+      '',
+      '🛠 실습/적용:',
+      practice,
+      '',
+      '❓ 막혔던 부분:',
+      difficult,
+      '',
+      '📖 참고 자료: '+resource,
+      '',
+      '➡️ 다음 학습 계획:',
+      next,
+      '',
+      '📊 체크리스트: '+done+'/'+total+' 완료  |  이번 주 학습: '+weeks+'회'
+    ].join('\n');
+
+    document.getElementById('resultContent').textContent=txt;
+    document.getElementById('result').style.display='block';
+
+    /* 인사이트 */
+    var insights=[];
+    if(sv>=4) insights.push('🔥 집중도가 높았어요! 오늘 배운 내용을 48시간 이내에 한 번 더 복습하면 장기 기억으로 전환됩니다.');
+    if(sv<=2) insights.push('😴 집중도가 낮았네요. 짧고 반복적인 학습(25분 뒤 5분 휴식)이 효과적일 수 있어요.');
+    if(diff==='어려움') insights.push('💪 어려운 내용을 만났을 때가 성장 포인트예요. 막힌 부분을 작게 쪼개서 하나씩 해결해보세요.');
+    if(apply==='바로 적용 가능') insights.push('🚀 실무에 바로 쓸 수 있는 기술이에요! 이번 주 실제 업무에 적용해보고 기록을 남겨보세요.');
+    if(weeks>=3) insights.push('🏆 이번 주 '+weeks+'회 학습! 꾸준함이 쌓이고 있어요. 목표 4회를 향해 파이팅!');
+    if(done===total) insights.push('✨ 모든 체크리스트를 완료했어요! 오늘은 완벽한 학습이었습니다.');
+
+    if(insights.length>0){
+      var ic=document.getElementById('insight');
+      document.getElementById('insightText').innerHTML='<strong>💡 오늘의 인사이트</strong><br><br>'+insights.join('<br><br>');
+      ic.style.display='block';
+    }
+
+    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'nearest'});
+  };
+})();
+</script>
+</body>
+</html>
